@@ -8,8 +8,8 @@
     <string name="players_exception">There was an issue communicating with players.</string>
     <string name="signed_out_greeting">You signed out</string>
     <string name="status_exception_error">%1$s (status %2$d). %3$s.</string>
-    <string name="signin_other_error">sign in other error</string>
-    <string name="ok">ok</string>
+    <string name="signin_other_error">Sign in failed</string>
+    <string name="ok">OK</string>
     <string name="show_leaderboards">Leaderboard</string>
     <string name="leaderboards_exception">leaderboards exception</string>
     <string name="times_up">TIME\'S UP!</string>
