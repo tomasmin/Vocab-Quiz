@@ -6,11 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainMenuFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="721dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/sign_in_bar"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="#000000"
+        android:background="@drawable/gradient"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="10dp"
@@ -36,7 +46,7 @@
         android:id="@+id/sign_out_bar"
         android:layout_width="match_parent"
         android:layout_height="125dp"
-        android:background="#000000"
+        android:background="@drawable/gradient"
         android:gravity="center|end"
         android:orientation="horizontal"
         android:padding="10dp"
@@ -57,60 +67,47 @@
             android:id="@+id/sign_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/gradientlight"
             android:text="@string/sign_out"
+            android:textColor="#FFC107"
             android:textSize="12sp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/play_button"
-        android:layout_width="125dp"
-        android:layout_height="53dp"
-        android:background="#3F51B5"
+        android:layout_width="133dp"
+        android:layout_height="69dp"
+        android:background="@drawable/gradientlight"
         android:text="Play"
+        android:textColor="#FFC107"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.676" />
 
     <Button
         android:id="@+id/show_leaderboards_button"
-        android:layout_width="125dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="20dp"
-        android:background="#CFCCCC"
+        android:layout_width="133dp"
+        android:layout_height="43dp"
+        android:background="@drawable/gradientlight"
         android:text="@string/show_leaderboards"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/play_button"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="125dp"
-        android:layout_height="133dp"
-        android:alpha=".5"
-        android:background="#00FFFFFF"
-        android:cropToPadding="true"
-        android:fadingEdge="horizontal|vertical"
-        android:src="@mipmap/ic_launcher_round"
+        android:textColor="#FFC107"
         app:layout_constraintBottom_toTopOf="@+id/play_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.92" />
 
     <Button
-        android:id="@+id/exit_button"
-        android:layout_width="125dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="20dp"
-        android:background="#5E2621"
-        android:text="EXIT"
-        app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_leaderboards_button"
-        app:layout_constraintVertical_bias="0.0" />
+        android:id="@+id/my_vocab_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Vocab"
+        tools:layout_editor_absoluteX="265dp"
+        tools:layout_editor_absoluteY="90dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

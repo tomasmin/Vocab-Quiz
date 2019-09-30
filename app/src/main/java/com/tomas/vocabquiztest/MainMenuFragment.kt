@@ -32,8 +32,8 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
             R.id.show_leaderboards_button -> mListener!!.onShowLeaderboardsRequested()
             R.id.play_button -> {
                 val intent = Intent(activity, PlayActivity::class.java)
-                startActivity(intent)
-            }
+                startActivity(intent) }
+            R.id.my_vocab_button -> mListener!!.onMyVocabButtonClicked()
         }
     }
 
@@ -45,6 +45,7 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
     private var mSignInBarView: View? = null
     private var mSignOutBarView: View? = null
     private var mShowLeaderboardsButton: View? = null
+    private var mMyVocabButton: View? = null
 
     private var mListener: Listener? = null
     private var mShowSignInButton = true
@@ -70,7 +71,8 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
             R.id.sign_in_button,
             R.id.sign_out_button,
             R.id.play_button,
-            R.id.show_leaderboards_button
+            R.id.show_leaderboards_button,
+            R.id.my_vocab_button
         )
 
         for (clickableId in clickableIds) {
@@ -80,6 +82,7 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
         mSignInBarView = view.findViewById(R.id.sign_in_bar)
         mSignOutBarView = view.findViewById(R.id.sign_out_bar)
         mShowLeaderboardsButton = view.findViewById(R.id.show_leaderboards_button)
+        mMyVocabButton = view.findViewById(R.id.my_vocab_button)
 
         updateUI()
 
@@ -112,6 +115,7 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
 
     private fun updateUI() {
         mShowLeaderboardsButton!!.isVisible = !mShowSignInButton
+        mMyVocabButton!!.isVisible = !mShowSignInButton
         mSignInBarView!!.visibility = if (mShowSignInButton) View.VISIBLE else View.GONE
         mSignOutBarView!!.visibility = if (mShowSignInButton) View.GONE else View.VISIBLE
     }
@@ -145,6 +149,8 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
         fun onSignOutButtonClicked()
 
         fun onShowLeaderboardsRequested()
+
+        fun onMyVocabButtonClicked()
     }
 
     companion object {

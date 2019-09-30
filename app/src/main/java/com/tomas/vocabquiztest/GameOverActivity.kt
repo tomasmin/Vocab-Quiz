@@ -19,7 +19,7 @@ class GameOverActivity : AppCompatActivity() {
 
         val points = intent.getIntExtra("Points", 0)
 
-        pointsText.text = "Your points: $points"
+        pointsView.text = "$points"
 
         restartButton.setOnClickListener {
             val intent = Intent(this@GameOverActivity, PlayActivity::class.java)

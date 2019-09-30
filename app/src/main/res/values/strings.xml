@@ -13,4 +13,7 @@
     <string name="show_leaderboards">Leaderboard</string>
     <string name="leaderboards_exception">leaderboards exception</string>
     <string name="times_up">TIME\'S UP!</string>
+    <string name="word">Word</string>
+    <string name="translation">Translation</string>
+    <string name="selected_item">selected item</string>
 </resources>

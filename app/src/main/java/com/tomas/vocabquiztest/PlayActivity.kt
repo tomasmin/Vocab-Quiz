@@ -61,7 +61,7 @@ class PlayActivity : AppCompatActivity() {
             if (correctButton == 1){
                 disableButtons()
                 tts.speak(optionAbutton.text.toString(), TextToSpeech.QUEUE_ADD, null,null)
-                optionAbutton.setBackgroundColor(getColor(R.color.darkGreen))
+                optionAbutton.background = getDrawable(R.drawable.gradientgreen)
                 points++
                 updateTimer(2000)
                 Timer("Delay", false).schedule(1000) {
@@ -69,7 +69,7 @@ class PlayActivity : AppCompatActivity() {
                 }
             }
             else {
-                optionAbutton.setBackgroundColor(Color.RED)
+                optionAbutton.background = getDrawable(R.drawable.gradientred)
                 updateTimer(-5000)
             }
         }
@@ -79,7 +79,7 @@ class PlayActivity : AppCompatActivity() {
             if (correctButton == 2){
                 disableButtons()
                 tts.speak(optionBbutton.text.toString(), TextToSpeech.QUEUE_ADD, null,null)
-                optionBbutton.setBackgroundColor(getColor(R.color.darkGreen))
+                optionBbutton.background = getDrawable(R.drawable.gradientgreen)
                 points++
                 updateTimer(2000)
                 Timer("Delay", false).schedule(1000) {
@@ -87,7 +87,7 @@ class PlayActivity : AppCompatActivity() {
                 }
             }
             else {
-                optionBbutton.setBackgroundColor(Color.RED)
+                optionBbutton.background = getDrawable(R.drawable.gradientred)
                 updateTimer(-5000)
             }
         }
@@ -97,7 +97,7 @@ class PlayActivity : AppCompatActivity() {
             if (correctButton == 3){
                 disableButtons()
                 tts.speak(optionCbutton.text.toString(), TextToSpeech.QUEUE_ADD, null,null)
-                optionCbutton.setBackgroundColor(getColor(R.color.darkGreen))
+                optionCbutton.background = getDrawable(R.drawable.gradientgreen)
                 points++
                 updateTimer(2000)
                 Timer("Delay", false).schedule(1000) {
@@ -105,7 +105,7 @@ class PlayActivity : AppCompatActivity() {
                 }
             }
             else {
-                optionCbutton.setBackgroundColor(Color.RED)
+                optionCbutton.background = getDrawable(R.drawable.gradientred)
                 updateTimer(-5000)
             }
         }
@@ -115,7 +115,7 @@ class PlayActivity : AppCompatActivity() {
             if (correctButton == 4){
                 disableButtons()
                 tts.speak(optionDbutton.text.toString(), TextToSpeech.QUEUE_ADD, null,null)
-                optionDbutton.setBackgroundColor(getColor(R.color.darkGreen))
+                optionDbutton.background = getDrawable(R.drawable.gradientgreen)
                 points++
                 updateTimer(2000)
                 Timer("Delay", false).schedule(1000) {
@@ -123,7 +123,7 @@ class PlayActivity : AppCompatActivity() {
                 }
             }
             else {
-                optionDbutton.setBackgroundColor(Color.RED)
+                optionDbutton.background = getDrawable(R.drawable.gradientred)
                 updateTimer(-5000)
             }
         }
@@ -137,10 +137,10 @@ class PlayActivity : AppCompatActivity() {
 
     private fun createNewQuestion() {
         enableButtons()
-        optionAbutton.setBackgroundColor(Color.GRAY)
-        optionBbutton.setBackgroundColor(Color.GRAY)
-        optionCbutton.setBackgroundColor(Color.GRAY)
-        optionDbutton.setBackgroundColor(Color.GRAY)
+        optionAbutton.background = getDrawable(R.drawable.gradientlight)
+        optionBbutton.background = getDrawable(R.drawable.gradientlight)
+        optionCbutton.background = getDrawable(R.drawable.gradientlight)
+        optionDbutton.background = getDrawable(R.drawable.gradientlight)
 
         val random = Random()
         val question = vocabMap.entries.elementAt(random.nextInt(vocabMap.size))

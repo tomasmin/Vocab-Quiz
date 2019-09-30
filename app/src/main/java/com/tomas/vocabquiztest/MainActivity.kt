@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.PlayersClient
 import com.google.android.gms.auth.api.Auth.*
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : FragmentActivity(), MainMenuFragment.Listener,
@@ -28,6 +29,10 @@ class MainActivity : FragmentActivity(), MainMenuFragment.Listener,
 
     private val RC_SIGN_IN = 9001
     private val RC_LEADERBOARD_UI = 9004
+
+    val db = FirebaseFirestore.getInstance()
+
+    var playerId: String = "guest"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,21 +127,30 @@ class MainActivity : FragmentActivity(), MainMenuFragment.Listener,
         // Show sign-out button on main menu
         mMainMenuFragment.setShowSignInButton(false)
 
-        // Set the greeting appropriately on main menu
+        // Get player id
         mPlayersClient!!.currentPlayer
             .addOnCompleteListener { task ->
-                val displayName: String
                 if (task.isSuccessful) {
-                    displayName = task.result!!.displayName
+                    val playerId = task.result!!.playerId
+                    this.playerId = playerId
                 } else {
                     val e = task.exception
                     if (e != null) {
                         handleException(e, getString(R.string.players_exception))
                     }
-                    displayName = "???"
                 }
             }
-
+//
+//        val dict = hashMapOf(
+//            "Hi" to "Salut",
+//            "Good day" to "Bonjour",
+//            "test" to "test"
+//        )
+//
+//        db.collection(playerId).document("French")
+//            .set(dict, SetOptions.merge())
+//            .addOnSuccessListener { Log.d("poop", "DocumentSnapshot successfully written!") }
+//            .addOnFailureListener { e -> Log.w("poop", "Error writing document", e) }
     }
 
     private fun onDisconnected() {
@@ -196,5 +210,11 @@ class MainActivity : FragmentActivity(), MainMenuFragment.Listener,
         Games.getLeaderboardsClient(this, GoogleSignIn.getLastSignedInAccount(this)!!)
             .getLeaderboardIntent(getString(R.string.leaderboard_id))
             .addOnSuccessListener { intent -> startActivityForResult(intent, RC_LEADERBOARD_UI) }
+    }
+
+    override fun onMyVocabButtonClicked() {
+        val intent = Intent(this@MainActivity, MyVocabActivity::class.java)
+        intent.putExtra("playerId", playerId)
+        startActivity(intent)
     }
 }
