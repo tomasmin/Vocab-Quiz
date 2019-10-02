@@ -38,13 +38,14 @@ class ListAdapter(private val list: MutableMap<String,String>)
         )
 
         docRef.update(updates).addOnCompleteListener {
-            notifyItemRemoved(position)
-            Snackbar.make(viewHolder.itemView, "$removedKey removed", Snackbar.LENGTH_LONG).setAction("UNDO") {
-                list[removedKey] = removedValue
-                notifyItemInserted(removedPosition)
-                docRef.update(removedKey, removedValue)
-            }.show()
         }
+
+        notifyItemRemoved(position)
+        Snackbar.make(viewHolder.itemView, "$removedKey removed", Snackbar.LENGTH_LONG).setAction("UNDO") {
+            list[removedKey] = removedValue
+            notifyItemInserted(removedPosition)
+            docRef.update(removedKey, removedValue)
+        }.show()
 
 
     }
