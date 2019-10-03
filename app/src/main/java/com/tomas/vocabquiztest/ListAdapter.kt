@@ -37,17 +37,48 @@ class ListAdapter(private val list: MutableMap<String,String>)
             removedKey to FieldValue.delete()
         )
 
-        docRef.update(updates).addOnCompleteListener {
-        }
+        docRef.update(updates)
 
-        notifyItemRemoved(position)
+        //notifyItemRemoved(position)
+        notifyDataSetChanged()
         Snackbar.make(viewHolder.itemView, "$removedKey removed", Snackbar.LENGTH_LONG).setAction("UNDO") {
             list[removedKey] = removedValue
-            notifyItemInserted(removedPosition)
+            //notifyItemInserted(removedPosition)
+            notifyDataSetChanged()
             docRef.update(removedKey, removedValue)
         }.show()
+    }
 
+    fun addItem (docRef: DocumentReference, key: String, value: String, recView: RecyclerView) {
+        var newValue = value
+        var oldValue = ""
+        var deleteOnUndo = true
+        if(list[key] != null && list[key] != value){
+            oldValue = list[key]!!
+            newValue = list[key] + "; " + value
+            deleteOnUndo = false
+        }
+        docRef.update(key, newValue)
+        list[key] = newValue
 
+        notifyDataSetChanged()
+
+        Snackbar.make(recView, "New translation to $key added", Snackbar.LENGTH_LONG).setAction("UNDO") {
+            if(deleteOnUndo){
+                list.remove(key)
+                //notifyItemRemoved(position)
+                notifyDataSetChanged()
+                val updates = hashMapOf<String, Any>(
+                    key to FieldValue.delete()
+                )
+                docRef.update(updates)
+            } else {
+                list[key] = oldValue
+                //notifyItemChanged(position)
+                notifyDataSetChanged()
+                docRef.update(key, oldValue)
+            }
+        }.show()
     }
 
     override fun getItemCount(): Int = list.size

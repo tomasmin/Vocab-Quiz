@@ -1,24 +1,20 @@
 package com.tomas.vocabquiztest
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.speech.tts.TextToSpeech
-import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_play.*
 import java.util.*
 import kotlin.concurrent.schedule
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
 
 
 class PlayActivity : AppCompatActivity() {
 
-    private val vocabMap = Dictionary().vocabMap
+    private val db = FirebaseFirestore.getInstance()
+    private var vocabMap = Dictionary().vocabMap
     private var correctButton: Int = 0
     private lateinit var tts: TextToSpeech
     private lateinit var countDownTimer: CountDownTimer
@@ -28,6 +24,22 @@ class PlayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play)
+
+        val playerId = intent.getStringExtra("playerId")
+        val documentId = intent.getStringExtra("document")
+
+        if(playerId != null && documentId != null) {
+            val docRef = db.collection(playerId).document(documentId)
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        vocabMap = document.data as Map<String, String>
+                    } else {
+                    }
+                }
+                .addOnFailureListener { exception ->
+                }
+        }
 
         pointsText.text = "Points: $points"
 
@@ -144,42 +156,42 @@ class PlayActivity : AppCompatActivity() {
 
         val random = Random()
         val question = vocabMap.entries.elementAt(random.nextInt(vocabMap.size))
-        val correctAnswer = question.value
+        val correctAnswer = question.key
         var tempVocabMap = vocabMap.toMutableMap()
-        tempVocabMap.remove(question.key)
+        tempVocabMap.remove(question.value)
         val option1 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
-        tempVocabMap.remove(option1.key)
+        tempVocabMap.remove(option1.value)
         val option2 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
-        tempVocabMap.remove(option2.key)
+        tempVocabMap.remove(option2.value)
         val option3 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
 
-        this.questionText.text = question.key
+        this.questionText.text = question.value
 
         correctButton = random.nextInt(4) + 1
 
         when(correctButton) {
             1 -> {
                 this.optionAbutton.text = correctAnswer
-                this.optionBbutton.text = option1.value
-                this.optionCbutton.text = option2.value
-                this.optionDbutton.text = option3.value
+                this.optionBbutton.text = option1.key
+                this.optionCbutton.text = option2.key
+                this.optionDbutton.text = option3.key
             }
             2 -> {
-                this.optionAbutton.text = option1.value
+                this.optionAbutton.text = option1.key
                 this.optionBbutton.text = correctAnswer
-                this.optionCbutton.text = option2.value
-                this.optionDbutton.text = option3.value
+                this.optionCbutton.text = option2.key
+                this.optionDbutton.text = option3.key
             }
             3 -> {
-                this.optionAbutton.text = option1.value
-                this.optionBbutton.text = option2.value
+                this.optionAbutton.text = option1.key
+                this.optionBbutton.text = option2.key
                 this.optionCbutton.text = correctAnswer
-                this.optionDbutton.text = option3.value
+                this.optionDbutton.text = option3.key
             }
             4 -> {
-                this.optionAbutton.text = option1.value
-                this.optionBbutton.text = option2.value
-                this.optionCbutton.text = option3.value
+                this.optionAbutton.text = option1.key
+                this.optionBbutton.text = option2.key
+                this.optionCbutton.text = option3.key
                 this.optionDbutton.text = correctAnswer
             }
         }

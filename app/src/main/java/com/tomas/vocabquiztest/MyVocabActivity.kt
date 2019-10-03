@@ -1,5 +1,6 @@
 package com.tomas.vocabquiztest
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,9 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,6 +22,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_my_vocab.*
+import android.content.DialogInterface
+import android.content.Intent
+import android.widget.EditText
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import androidx.appcompat.app.AlertDialog
 
 
 class MyVocabActivity : AppCompatActivity() {
@@ -31,6 +41,7 @@ class MyVocabActivity : AppCompatActivity() {
 
     private lateinit var colorDrawableBackground: ColorDrawable
     private lateinit var deleteIcon: Drawable
+    private lateinit var selectedSpinner: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,29 +52,24 @@ class MyVocabActivity : AppCompatActivity() {
         colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
         deleteIcon = ContextCompat.getDrawable(this, R.drawable.ic_delete)!!
 
-        db.collection(playerId)
-            .get()
-            .addOnSuccessListener { result ->
-                val vocabNames = arrayListOf<String>()
-                for (document in result) {
-                    Log.d("poop", "${document.id} => ${document.data}")
-                    vocabNames!!.add(document.id)
-                    //vocabMap = document.data as Map<String, String>
-                    //list_recycler_view.adapter = ListAdapter(vocabMap)
-                }
-                populateSpinner(vocabNames, playerId)
-            }
-            .addOnFailureListener { exception ->
-                Log.d("poop", "Error getting documents: ", exception)
-            }
+        getDocumentsForSpinner(playerId)
 
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder2: RecyclerView.ViewHolder): Boolean {
+        val itemTouchHelperCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                viewHolder2: RecyclerView.ViewHolder
+            ): Boolean {
                 return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
-                (viewAdapter as ListAdapter).removeItem(viewHolder.adapterPosition, viewHolder, docRef)
+                (viewAdapter as ListAdapter).removeItem(
+                    viewHolder.adapterPosition,
+                    viewHolder,
+                    docRef
+                )
             }
 
             override fun onChildDraw(
@@ -76,16 +82,35 @@ class MyVocabActivity : AppCompatActivity() {
                 isCurrentlyActive: Boolean
             ) {
                 val itemView = viewHolder.itemView
-                val iconMarginVertical = (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
+                val iconMarginVertical =
+                    (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
 
                 if (dX > 0) {
-                    colorDrawableBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
-                    deleteIcon.setBounds(itemView.left + iconMarginVertical, itemView.top + iconMarginVertical,
-                        itemView.left + iconMarginVertical + deleteIcon.intrinsicWidth, itemView.bottom - iconMarginVertical)
+                    colorDrawableBackground.setBounds(
+                        itemView.left,
+                        itemView.top,
+                        dX.toInt(),
+                        itemView.bottom
+                    )
+                    deleteIcon.setBounds(
+                        itemView.left + iconMarginVertical,
+                        itemView.top + iconMarginVertical,
+                        itemView.left + iconMarginVertical + deleteIcon.intrinsicWidth,
+                        itemView.bottom - iconMarginVertical
+                    )
                 } else {
-                    colorDrawableBackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
-                    deleteIcon.setBounds(itemView.right - iconMarginVertical - deleteIcon.intrinsicWidth, itemView.top + iconMarginVertical,
-                        itemView.right - iconMarginVertical, itemView.bottom - iconMarginVertical)
+                    colorDrawableBackground.setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    deleteIcon.setBounds(
+                        itemView.right - iconMarginVertical - deleteIcon.intrinsicWidth,
+                        itemView.top + iconMarginVertical,
+                        itemView.right - iconMarginVertical,
+                        itemView.bottom - iconMarginVertical
+                    )
                     deleteIcon.level = 0
                 }
 
@@ -96,18 +121,68 @@ class MyVocabActivity : AppCompatActivity() {
                 if (dX > 0)
                     c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
                 else
-                    c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    c.clipRect(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
 
                 deleteIcon.draw(c)
 
                 c.restore()
 
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
             }
         }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(list_recycler_view)
+
+        addButton.setOnClickListener {
+            if (editKey.text.isNotBlank() && editValue.text.isNotBlank()) {
+                (viewAdapter as ListAdapter).addItem(
+                    docRef,
+                    editKey.text.toString(),
+                    editValue.text.toString(),
+                    list_recycler_view
+                )
+                editValue.text.clear()
+                editKey.text.clear()
+                val inputManager: InputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(
+                    currentFocus!!.windowToken,
+                    InputMethodManager.SHOW_FORCED
+                )
+            } else {
+                Toast.makeText(
+                    this,
+                    "Word and translation values must not be empty",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        newDictButton.setOnClickListener {
+            showAddItemDialog(this, playerId)
+        }
+
+        myPlayButton.setOnClickListener {
+            val intent = Intent(this, PlayActivity::class.java)
+            intent.putExtra("playerId", playerId)
+            intent.putExtra("document", selectedSpinner)
+            startActivity(intent)
+        }
+
     }
 
     private fun populateSpinner(vocabNames: ArrayList<String>?, playerId: String) {
@@ -127,10 +202,11 @@ class MyVocabActivity : AppCompatActivity() {
                 ) {
                     docRef = db.collection(playerId).document(vocabNames[position])
                     populateList()
+                    selectedSpinner = vocabNames[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
-                    // Code to perform some action when nothing is selected
+                    //showAddItemDialog(this@MyVocabActivity, playerId)
                 }
             }
         }
@@ -149,7 +225,12 @@ class MyVocabActivity : AppCompatActivity() {
                         setHasFixedSize(true)
                         adapter = viewAdapter
                         layoutManager = viewManager
-                        addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+                        addItemDecoration(
+                            DividerItemDecoration(
+                                this.context,
+                                DividerItemDecoration.VERTICAL
+                            )
+                        )
                     }
                 } else {
                     Log.d("poop", "No such document")
@@ -157,6 +238,70 @@ class MyVocabActivity : AppCompatActivity() {
             }
             .addOnFailureListener { exception ->
                 Log.d("poop", "get failed with ", exception)
+            }
+    }
+
+    private fun showAddItemDialog(c: Context, playerId: String) {
+        val taskEditText = EditText(c)
+        val dialog = AlertDialog.Builder(c)
+            .setTitle("Create a new dictionary")
+            .setMessage("Enter the name of the dictionary")
+            .setView(taskEditText)
+            .setPositiveButton(
+                "Add"
+            ) { _, _ ->
+                if (taskEditText.text.isBlank()) {
+                    Toast.makeText(
+                        this,
+                        "Dictionary name must not be blank",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    showAddItemDialog(this, playerId)
+                } else {
+                    db.collection(playerId).document(taskEditText.text.toString()).get()
+                        .addOnSuccessListener { document ->
+                            if (document.exists()) {
+                                Toast.makeText(
+                                    this,
+                                    "Dictionary with that name already exists",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                db.collection(playerId).document(taskEditText.text.toString())
+                                    .set(mapOf("Swipe" to "to delete"))
+                                Toast.makeText(
+                                    this,
+                                    "Dictionary created successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                getDocumentsForSpinner(playerId)
+                            }
+                        }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        dialog.show()
+    }
+
+    private fun getDocumentsForSpinner(playerId: String) {
+        db.collection(playerId)
+            .get()
+            .addOnSuccessListener { result ->
+                val vocabNames = arrayListOf<String>()
+                for (document in result) {
+                    Log.d("poop", "${document.id} => ${document.data}")
+                    vocabNames!!.add(document.id)
+                    //vocabMap = document.data as Map<String, String>
+                    //list_recycler_view.adapter = ListAdapter(vocabMap)
+                }
+                if (vocabNames.isEmpty()) {
+                    showAddItemDialog(this, playerId)
+                }
+                populateSpinner(vocabNames, playerId)
+            }
+            .addOnFailureListener { exception ->
+                Log.d("poop", "Error getting documents: ", exception)
             }
     }
 
