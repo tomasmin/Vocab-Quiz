@@ -18,7 +18,7 @@ class PlayActivity : AppCompatActivity() {
     private var correctButton: Int = 0
     private lateinit var tts: TextToSpeech
     private lateinit var countDownTimer: CountDownTimer
-    private var millis: Long = 30000
+    private var millis: Long = 30999
     private var points: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,22 +43,7 @@ class PlayActivity : AppCompatActivity() {
 
         pointsText.text = "Points: $points"
 
-
-        countDownTimer = object: CountDownTimer(millis, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                timerText.text = ("Time: " + millisUntilFinished / 1000)
-                millis = millisUntilFinished
-            }
-
-            override fun onFinish() {
-                disableButtons()
-                val intent = Intent(this@PlayActivity, GameOverActivity::class.java)
-                intent.putExtra("Points",points)
-                startActivity(intent)
-                finish()
-            }
-        }.start()
+        startTimer()
 
         createNewQuestion()
 
@@ -142,7 +127,11 @@ class PlayActivity : AppCompatActivity() {
 
         restartButton.setOnClickListener {
             countDownTimer.cancel()
-            recreate()
+            points = 0
+            pointsText.text = "Points: $points"
+            millis = 30999
+            createNewQuestion()
+            startTimer()
         }
     }
 
@@ -158,11 +147,11 @@ class PlayActivity : AppCompatActivity() {
         val question = vocabMap.entries.elementAt(random.nextInt(vocabMap.size))
         val correctAnswer = question.key
         var tempVocabMap = vocabMap.toMutableMap()
-        tempVocabMap.remove(question.value)
+        tempVocabMap.remove(question.key)
         val option1 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
-        tempVocabMap.remove(option1.value)
+        tempVocabMap.remove(option1.key)
         val option2 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
-        tempVocabMap.remove(option2.value)
+        tempVocabMap.remove(option2.key)
         val option3 = tempVocabMap.entries.elementAt(random.nextInt(tempVocabMap.size))
 
         this.questionText.text = question.value
@@ -240,5 +229,23 @@ class PlayActivity : AppCompatActivity() {
         countDownTimer.cancel()
 
         super.onBackPressed()
+    }
+
+    private fun startTimer() {
+        countDownTimer = object: CountDownTimer(millis, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                timerText.text = ("Time: " + millisUntilFinished / 1000)
+                millis = millisUntilFinished
+            }
+
+            override fun onFinish() {
+                disableButtons()
+                val intent = Intent(this@PlayActivity, GameOverActivity::class.java)
+                intent.putExtra("Points",points)
+                startActivity(intent)
+                finish()
+            }
+        }.start()
     }
 }

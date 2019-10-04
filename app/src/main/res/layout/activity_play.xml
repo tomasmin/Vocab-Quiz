@@ -27,7 +27,10 @@
     <TextView
         android:id="@+id/questionText"
         android:layout_width="322dp"
-        android:layout_height="44dp"
+        android:layout_height="70dp"
+        android:autoSizeMaxTextSize="30sp"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeTextType="uniform"
         android:text="Question?"
         android:textAlignment="center"
         android:textColor="#FFC107"
