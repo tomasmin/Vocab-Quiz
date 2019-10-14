@@ -82,11 +82,12 @@
 
     <Button
         android:id="@+id/newDictButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="100dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="20dp"
         android:text="New"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/spinner"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,7 +97,18 @@
         android:layout_height="wrap_content"
         android:text="Play"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deleteDictButton"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_recycler_view" />
+
+    <Button
+        android:id="@+id/deleteDictButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="109dp"
+        android:text="Delete Dictionary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/myPlayButton"
         app:layout_constraintTop_toBottomOf="@+id/list_recycler_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ import kotlin.concurrent.schedule
 class PlayActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
-    private var vocabMap = Dictionary().vocabMap
+    private lateinit var vocabMap: Map<String, String>
     private var correctButton: Int = 0
     private lateinit var tts: TextToSpeech
     private lateinit var countDownTimer: CountDownTimer
@@ -28,24 +28,26 @@ class PlayActivity : AppCompatActivity() {
         val playerId = intent.getStringExtra("playerId")
         val documentId = intent.getStringExtra("document")
 
+        pointsText.text = "Points: $points"
+
         if(playerId != null && documentId != null) {
             val docRef = db.collection(playerId).document(documentId)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
                         vocabMap = document.data as Map<String, String>
+                        startTimer()
+                        createNewQuestion()
                     } else {
                     }
                 }
                 .addOnFailureListener { exception ->
                 }
+        } else {
+            vocabMap = Dictionary().vocabMap
+            startTimer()
+            createNewQuestion()
         }
-
-        pointsText.text = "Points: $points"
-
-        startTimer()
-
-        createNewQuestion()
 
         tts = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
             if (status != TextToSpeech.ERROR){

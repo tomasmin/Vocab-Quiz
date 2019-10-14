@@ -41,7 +41,9 @@ class MyVocabActivity : AppCompatActivity() {
 
     private lateinit var colorDrawableBackground: ColorDrawable
     private lateinit var deleteIcon: Drawable
-    private lateinit var selectedSpinner: String
+    private var selectedSpinner = ""
+
+    private val TAG = "poop"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,7 +150,7 @@ class MyVocabActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(list_recycler_view)
 
         addButton.setOnClickListener {
-            if (editKey.text.isNotBlank() && editValue.text.isNotBlank()) {
+            if (editKey.text.isNotBlank() && editValue.text.isNotBlank() && selectedSpinner.isNotEmpty()) {
                 (viewAdapter as ListAdapter).addItem(
                     docRef,
                     editKey.text.toString(),
@@ -166,7 +168,7 @@ class MyVocabActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     this,
-                    "Word and translation values must not be empty",
+                    "Dictionary, word and translation values must not be empty",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -176,11 +178,37 @@ class MyVocabActivity : AppCompatActivity() {
             showAddItemDialog(this, playerId)
         }
 
+        deleteDictButton.setOnClickListener {
+            if(selectedSpinner.isNotEmpty()) {
+                showRemoveItemDialog(this, playerId)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Nothing to delete",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         myPlayButton.setOnClickListener {
-            val intent = Intent(this, PlayActivity::class.java)
-            intent.putExtra("playerId", playerId)
-            intent.putExtra("document", selectedSpinner)
-            startActivity(intent)
+            if(selectedSpinner.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "Create a dictionary first",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (viewAdapter.itemCount < 4) {
+                Toast.makeText(
+                    this,
+                    "Not enough words. Create at least 4",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                val intent = Intent(this, PlayActivity::class.java)
+                intent.putExtra("playerId", playerId)
+                intent.putExtra("document", selectedSpinner)
+                startActivity(intent)
+            }
         }
 
     }
@@ -217,7 +245,7 @@ class MyVocabActivity : AppCompatActivity() {
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d("poop", "DocumentSnapshot data: ${document.data}")
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     val vocabMap = document.data as MutableMap<String, String>
                     viewAdapter = ListAdapter(vocabMap)
                     viewManager = LinearLayoutManager(this)
@@ -233,11 +261,11 @@ class MyVocabActivity : AppCompatActivity() {
                         )
                     }
                 } else {
-                    Log.d("poop", "No such document")
+                    Log.d(TAG, "No such document")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d("poop", "get failed with ", exception)
+                Log.d(TAG, "get failed with ", exception)
             }
     }
 
@@ -290,7 +318,7 @@ class MyVocabActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 val vocabNames = arrayListOf<String>()
                 for (document in result) {
-                    Log.d("poop", "${document.id} => ${document.data}")
+                    Log.d(TAG, "${document.id} => ${document.data}")
                     vocabNames!!.add(document.id)
                     //vocabMap = document.data as Map<String, String>
                     //list_recycler_view.adapter = ListAdapter(vocabMap)
@@ -301,8 +329,38 @@ class MyVocabActivity : AppCompatActivity() {
                 populateSpinner(vocabNames, playerId)
             }
             .addOnFailureListener { exception ->
-                Log.d("poop", "Error getting documents: ", exception)
+                Log.d(TAG, "Error getting documents: ", exception)
             }
+    }
+
+    private fun showRemoveItemDialog(c: Context, playerId: String) {
+        val dialog = AlertDialog.Builder(c)
+            .setTitle("Delete dictionary")
+            .setMessage("are you sure you want to delete $selectedSpinner?")
+            .setPositiveButton(
+                "Delete"
+            ) { _, _ ->
+                db.collection(playerId).document(selectedSpinner)
+                    .delete()
+                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                        Toast.makeText(
+                            this,
+                            "Dictionary deleted successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        selectedSpinner = ""
+                        getDocumentsForSpinner(playerId)
+                    }
+                    .addOnFailureListener { e -> Log.w(TAG, "Error deleting document", e)
+                        Toast.makeText(
+                            this,
+                            "Error deleting document",
+                            Toast.LENGTH_SHORT
+                        ).show()}
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        dialog.show()
     }
 
 }
