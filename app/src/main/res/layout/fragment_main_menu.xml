@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainMenuFragment">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="721dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/sign_in_bar"
         android:layout_width="match_parent"
@@ -40,12 +30,13 @@
             android:layout_weight="1"
             android:text="@string/sign_in_why"
             android:textColor="#808080" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/sign_out_bar"
         android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:layout_height="120dp"
         android:background="@drawable/gradient"
         android:gravity="center|end"
         android:orientation="horizontal"
@@ -67,9 +58,9 @@
             android:id="@+id/sign_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradientlight"
+            android:background="@drawable/back"
             android:text="@string/sign_out"
-            android:textColor="#FFC107"
+            android:textColor="@android:color/secondary_text_dark"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -77,37 +68,76 @@
         android:id="@+id/play_button"
         android:layout_width="133dp"
         android:layout_height="69dp"
-        android:background="@drawable/gradientlight"
+        android:background="@drawable/back"
+        android:fontFamily="casual"
         android:text="Play"
-        android:textColor="#FFC107"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@android:color/secondary_text_dark"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.676" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/show_leaderboards_button"
         android:layout_width="133dp"
         android:layout_height="43dp"
-        android:background="@drawable/gradientlight"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/back"
+        android:fontFamily="casual"
         android:text="@string/show_leaderboards"
-        android:textColor="#FFC107"
-        app:layout_constraintBottom_toTopOf="@+id/play_button"
+        android:textColor="@android:color/secondary_text_dark"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.892"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.92" />
+        app:layout_constraintTop_toBottomOf="@+id/my_vocab_button"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/my_vocab_button"
+        android:layout_width="133dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/back"
+        android:fontFamily="casual"
+        android:text="My Vocab"
+        android:textColor="@android:color/secondary_text_dark"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/play_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Vocab"
-        tools:layout_editor_absoluteX="265dp"
-        tools:layout_editor_absoluteY="90dp" />
+        android:background="@drawable/back"
+        android:fontFamily="casual"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp"
+        android:text="VOCAB QUIZ"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/signInText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Please sign in to enable My Vocab and Leaderboard"
+        android:textColor="#5BFFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

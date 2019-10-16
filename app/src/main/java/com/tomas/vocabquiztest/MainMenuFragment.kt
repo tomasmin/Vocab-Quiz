@@ -47,6 +47,7 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
     private var mSignOutBarView: View? = null
     private var mShowLeaderboardsButton: View? = null
     private var mMyVocabButton: View? = null
+    private var mPleaseSignInText: View? = null
 
     private var mListener: Listener? = null
     private var mShowSignInButton = true
@@ -84,6 +85,7 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
         mSignOutBarView = view.findViewById(R.id.sign_out_bar)
         mShowLeaderboardsButton = view.findViewById(R.id.show_leaderboards_button)
         mMyVocabButton = view.findViewById(R.id.my_vocab_button)
+        mPleaseSignInText = view.findViewById(R.id.signInText)
 
         updateUI()
 
@@ -115,10 +117,11 @@ class MainMenuFragment : Fragment(), View.OnClickListener {
 
 
     private fun updateUI() {
-        mShowLeaderboardsButton!!.isVisible = !mShowSignInButton
-        mMyVocabButton!!.isVisible = !mShowSignInButton
+        mShowLeaderboardsButton!!.isEnabled = !mShowSignInButton
+        mMyVocabButton!!.isEnabled = !mShowSignInButton
         mSignInBarView!!.visibility = if (mShowSignInButton) View.VISIBLE else View.GONE
         mSignOutBarView!!.visibility = if (mShowSignInButton) View.GONE else View.VISIBLE
+        mPleaseSignInText!!.isVisible = mShowSignInButton
     }
 
     fun setShowSignInButton(showSignInButton: Boolean) {

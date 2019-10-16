@@ -30,6 +30,12 @@ class PlayActivity : AppCompatActivity() {
 
         pointsText.text = "Points: $points"
 
+        tts = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
+            if (status != TextToSpeech.ERROR){
+                tts.language = Locale.FRANCE
+            }
+        })
+
         if(playerId != null && documentId != null) {
             val docRef = db.collection(playerId).document(documentId)
             docRef.get()
@@ -48,12 +54,6 @@ class PlayActivity : AppCompatActivity() {
             startTimer()
             createNewQuestion()
         }
-
-        tts = TextToSpeech(applicationContext, TextToSpeech.OnInitListener { status ->
-            if (status != TextToSpeech.ERROR){
-                tts.language = Locale.FRANCE
-            }
-        })
 
         optionAbutton.setOnClickListener {
             optionAbutton.isEnabled = false
@@ -140,10 +140,10 @@ class PlayActivity : AppCompatActivity() {
 
     private fun createNewQuestion() {
         enableButtons()
-        optionAbutton.background = getDrawable(R.drawable.gradientlight)
-        optionBbutton.background = getDrawable(R.drawable.gradientlight)
-        optionCbutton.background = getDrawable(R.drawable.gradientlight)
-        optionDbutton.background = getDrawable(R.drawable.gradientlight)
+        optionAbutton.background = getDrawable(R.drawable.back)
+        optionBbutton.background = getDrawable(R.drawable.back)
+        optionCbutton.background = getDrawable(R.drawable.back)
+        optionDbutton.background = getDrawable(R.drawable.back)
 
         val random = Random()
         val question = vocabMap.entries.elementAt(random.nextInt(vocabMap.size))
